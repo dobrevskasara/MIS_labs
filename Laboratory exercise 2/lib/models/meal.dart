@@ -16,4 +16,12 @@ class Meal {
       strMealThumb: json['strMealThumb'] as String,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'idMeal': idMeal,
+      'strMeal': strMeal,
+      'strMealThumb': strMealThumb,
+    };
+  }
 }

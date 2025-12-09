@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
 import '../models/category.dart';
 import '../screens/meal_list_screen.dart';
+import '../models/meal.dart';
 
 class CategoryCard extends StatelessWidget {
   final Category category;
+  final List<Meal> favorites;
+  final Function(Meal) toggleFavorite;
+  final bool Function(Meal) isFavorite;
 
-  const CategoryCard({super.key, required this.category});
+  const CategoryCard({
+    super.key,
+    required this.category,
+    required this.favorites,
+    required this.toggleFavorite,
+    required this.isFavorite,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +29,9 @@ class CategoryCard extends StatelessWidget {
             MaterialPageRoute(
               builder: (context) => MealListScreen(
                 categoryName: category.strCategory,
+                favorites: favorites,
+                toggleFavorite: toggleFavorite,
+                isFavorite: isFavorite,
               ),
             ),
           );
@@ -34,10 +47,12 @@ class CategoryCard extends StatelessWidget {
               fit: BoxFit.cover,
               loadingBuilder: (context, child, loadingProgress) {
                 if (loadingProgress == null) return child;
-                return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+                return const Center(
+                    child: CircularProgressIndicator(strokeWidth: 2));
               },
               errorBuilder: (context, error, stackTrace) {
-                return const Icon(Icons.broken_image, size: 40, color: Colors.grey);
+                return const Icon(Icons.broken_image,
+                    size: 40, color: Colors.grey);
               },
             ),
           ),

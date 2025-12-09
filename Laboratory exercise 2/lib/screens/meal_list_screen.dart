@@ -5,8 +5,17 @@ import '../widgets/meal_grid_item.dart';
 
 class MealListScreen extends StatefulWidget {
   final String categoryName;
+  final List<Meal> favorites;
+  final Function(Meal) toggleFavorite;
+  final bool Function(Meal) isFavorite;
 
-  const MealListScreen({super.key, required this.categoryName});
+  const MealListScreen({
+    super.key,
+    required this.categoryName,
+    required this.favorites,
+    required this.toggleFavorite,
+    required this.isFavorite,
+  });
 
   @override
   State<MealListScreen> createState() => _MealListScreenState();
@@ -28,9 +37,9 @@ class _MealListScreenState extends State<MealListScreen> {
   void _filterMeals() {
     final query = _searchController.text.toLowerCase();
     setState(() {
-      _displayedMeals = _allMeals.where((meal) {
-        return meal.strMeal.toLowerCase().contains(query);
-      }).toList();
+      _displayedMeals = _allMeals
+          .where((meal) => meal.strMeal.toLowerCase().contains(query))
+          .toList();
     });
   }
 
@@ -56,18 +65,18 @@ class _MealListScreenState extends State<MealListScreen> {
               controller: _searchController,
               decoration: const InputDecoration(
                 labelText: 'Пребарај јадења во категоријата...',
-                border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
+                border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.search),
               ),
             ),
           ),
-
           Expanded(
             child: FutureBuilder<List<Meal>>(
               future: _mealsFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const Center(
+                      child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Грешка: ${snapshot.error}'));
                 } else if (snapshot.hasData) {
@@ -75,19 +84,25 @@ class _MealListScreenState extends State<MealListScreen> {
                     _allMeals = snapshot.data!;
                     _displayedMeals = _allMeals;
                     if (_searchController.text.isNotEmpty) {
-                      WidgetsBinding.instance.addPostFrameCallback((_) => _filterMeals());
+                      WidgetsBinding.instance
+                          .addPostFrameCallback((_) => _filterMeals());
                     }
                   } else if (_allMeals.isEmpty && snapshot.data!.isEmpty) {
-                    return Center(child: Text('Нема пронајдено јадења во ${widget.categoryName}.'));
+                    return Center(
+                        child: Text(
+                            'Нема пронајдено јадења во ${widget.categoryName}.'));
                   }
 
                   if (_displayedMeals.isEmpty) {
-                    return Center(child: Text('Нема пронајдено јадења според пребарувањето во ${widget.categoryName}.'));
+                    return Center(
+                        child: Text(
+                            'Нема пронајдено јадења според пребарувањето во ${widget.categoryName}.'));
                   }
 
                   return GridView.builder(
                     padding: const EdgeInsets.all(8.0),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                    const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       crossAxisSpacing: 10,
                       mainAxisSpacing: 10,
@@ -96,7 +111,12 @@ class _MealListScreenState extends State<MealListScreen> {
                     itemCount: _displayedMeals.length,
                     itemBuilder: (context, index) {
                       final meal = _displayedMeals[index];
-                      return MealGridItem(meal: meal);
+                      return MealGridItem(
+                        meal: meal,
+                        favorites: widget.favorites,
+                        toggleFavorite: widget.toggleFavorite,
+                        isFavorite: widget.isFavorite,
+                      );
                     },
                   );
                 } else {
