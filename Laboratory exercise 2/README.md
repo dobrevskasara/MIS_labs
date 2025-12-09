@@ -1,16 +1,74 @@
-# mis_lab2_221125
+Лабораториска вежба 2
 
-A new Flutter project.
+Да се имплементира апликација за прикажување на рецепти со користење на API од TheMealDB (https://www.themealdb.com/api.php).
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
+Барања:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Почетен екран - Листа од категории
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Прикажете листа на картички со сите категории на јадења
+
+Endpoint: https://www.themealdb.com/api/json/v1/1/categories.php
+
+Секоја картичка треба да содржи: име на категорија, слика и краток опис
+
+Овозможете пребарување на категории
+
+Екран со јадења по категорија
+
+При клик на некоја категорија, да се прикаже нов екран со сите јадења од таа категорија
+
+Endpoint: https://www.themealdb.com/api/json/v1/1/filter.php?c={category}
+
+Прикажете ги јадењата во grid layout со слика и име
+
+Овозможете пребарување на јадења од избраната категорија (https://www.themealdb.com/api/json/v1/1/search.php?s={query} )
+
+Детален приказ на рецепт
+
+При клик на јадење, отворете екран со детален рецепт
+
+Endpoint: https://www.themealdb.com/api/json/v1/1/lookup.php?i={id}
+
+Прикажете: слика, име, инструкции, состојки и YouTube линк (ако постои)
+
+Рандом рецепт на денот
+
+Додајте копче во AppBar за приказ на рандом рецепт
+
+Endpoint: https://www.themealdb.com/api/json/v1/1/random.php
+
+Прикажете целосен рецепт со сите детали
+
+Организирајте го кодот во посебни фајлови и фолдери (models, screens, widgets, services)
+
+
+
+Лабораториска вежба 3
+
+Да се надгради апликацијата од претходната лабораториска вежба.
+
+
+
+Барања:
+
+Додавање омилени рецепти
+
+Имплементирајте нов екран во кој ќе ги додавате омилените рецепти, од листата на рецепти.
+
+За таа цел додадете копче за ознака на омилен рецепт на картичките на почетниот екран.
+
+Поврзи го проектот со Firebase
+
+Потребно е да го регистрирате Вашиот проект на конзолата на Firebase и да го следите водичот од аудиториските вежби за поврзување на Firebase со Flutter проект.
+
+Нотификации
+
+Да овозможи нотификации (локални или push) со Firebase за потсетување на корисникот да ја отвори апликацијата и да види рандом рецепт на денот (во време по ваш избор).
+
+Користете ја документацијата: https://firebase.google.com/docs/cloud-messaging/flutter/client
+
+Организирајте го кодот во посебни фајлови и фолдери (models, screens, widgets, services)
+
