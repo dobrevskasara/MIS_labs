@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
 import '../models/category.dart';
 import '../screens/meal_list_screen.dart';
-import '../models/meal.dart';
+import '../services/firebase_service.dart';
 
 class CategoryCard extends StatelessWidget {
   final Category category;
-  final List<Meal> favorites;
-  final Function(Meal) toggleFavorite;
-  final bool Function(Meal) isFavorite;
+  final FirebaseService firebaseService;
 
   const CategoryCard({
     super.key,
     required this.category,
-    required this.favorites,
-    required this.toggleFavorite,
-    required this.isFavorite,
+    required this.firebaseService,
   });
 
   @override
@@ -29,9 +25,7 @@ class CategoryCard extends StatelessWidget {
             MaterialPageRoute(
               builder: (context) => MealListScreen(
                 categoryName: category.strCategory,
-                favorites: favorites,
-                toggleFavorite: toggleFavorite,
-                isFavorite: isFavorite,
+                firebaseService: firebaseService,
               ),
             ),
           );

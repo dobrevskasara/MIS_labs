@@ -1,53 +1,48 @@
 import 'package:flutter/material.dart';
-import 'screens/category_list_screen.dart';
 import 'models/meal.dart';
 import 'screens/favorites_screen.dart';
+import 'screens/random_meal_screen.dart';
+import 'screens/category_list_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'services/firebase_service.dart';
 
-void main() {
-  runApp(const MyApp());
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
+  final FirebaseService firebaseService = FirebaseService();
+
+  await firebaseService.initFirebaseMessaging(navigatorKey);
+
+  runApp(MyApp(firebaseService: firebaseService));
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  final FirebaseService firebaseService;
+
+  const MyApp({super.key, required this.firebaseService});
 
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  List<Meal> favorites = [];
-
-  void toggleFavorite(Meal meal) {
-    final exists = favorites.any((m) => m.idMeal == meal.idMeal);
-
-    if (exists) {
-      favorites.removeWhere((m) => m.idMeal == meal.idMeal);
-    } else {
-      favorites.add(meal);
-    }
-
-    setState(() {});
-  }
-
-  bool isFavorite(Meal meal) {
-    return favorites.any((m) => m.idMeal == meal.idMeal);
-  }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       title: 'MealDB Рецепти',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         useMaterial3: true,
       ),
-      home: CategoryListScreen(
-        favorites: favorites,
-        toggleFavorite: toggleFavorite,
-        isFavorite: isFavorite,
-      ),
+      home: CategoryListScreen(firebaseService: widget.firebaseService),
       routes: {
-        '/favorites': (_) => FavoritesScreen(favorites: favorites),
+        '/favorites': (_) => FavoritesScreen(firebaseService: widget.firebaseService),
+        '/randomMeal': (_) => const RandomMealScreen(),
       },
     );
   }

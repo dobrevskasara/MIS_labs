@@ -2,20 +2,12 @@ import 'package:flutter/material.dart';
 import '../models/category.dart';
 import '../services/api_service.dart';
 import '../widgets/category_card.dart';
-import 'random_meal_screen.dart';
-import '../models/meal.dart';
+import '../services/firebase_service.dart';
 
 class CategoryListScreen extends StatefulWidget {
-  final List<Meal> favorites;
-  final Function(Meal) toggleFavorite;
-  final bool Function(Meal) isFavorite;
+  final FirebaseService firebaseService;
 
-  const CategoryListScreen({
-    super.key,
-    required this.favorites,
-    required this.toggleFavorite,
-    required this.isFavorite,
-  });
+  const CategoryListScreen({super.key, required this.firebaseService});
 
   @override
   State<CategoryListScreen> createState() => _CategoryListScreenState();
@@ -57,25 +49,6 @@ class _CategoryListScreenState extends State<CategoryListScreen> {
         title: const Text('MealDB Категории'),
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.favorite),
-            tooltip: 'Омилени рецепти',
-            onPressed: () {
-              Navigator.pushNamed(context, '/favorites');
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.shuffle),
-            tooltip: 'Случаен Рецепт',
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const RandomMealScreen()),
-              );
-            },
-          ),
-        ],
       ),
       body: Column(
         children: [
@@ -95,8 +68,7 @@ class _CategoryListScreenState extends State<CategoryListScreen> {
               future: _categoriesFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                      child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Грешка: ${snapshot.error}'));
                 } else if (snapshot.hasData) {
@@ -114,15 +86,14 @@ class _CategoryListScreenState extends State<CategoryListScreen> {
                         child: Text(
                             'Нема пронајдени категории според пребарувањето.'));
                   }
+
                   return ListView.builder(
                     itemCount: _filteredCategories.length,
                     itemBuilder: (context, index) {
                       final category = _filteredCategories[index];
                       return CategoryCard(
                         category: category,
-                        favorites: widget.favorites,
-                        toggleFavorite: widget.toggleFavorite,
-                        isFavorite: widget.isFavorite,
+                        firebaseService: widget.firebaseService,
                       );
                     },
                   );

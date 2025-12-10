@@ -2,19 +2,16 @@ import 'package:flutter/material.dart';
 import '../models/meal.dart';
 import '../services/api_service.dart';
 import '../widgets/meal_grid_item.dart';
+import '../services/firebase_service.dart';
 
 class MealListScreen extends StatefulWidget {
   final String categoryName;
-  final List<Meal> favorites;
-  final Function(Meal) toggleFavorite;
-  final bool Function(Meal) isFavorite;
+  final FirebaseService firebaseService;
 
   const MealListScreen({
     super.key,
     required this.categoryName,
-    required this.favorites,
-    required this.toggleFavorite,
-    required this.isFavorite,
+    required this.firebaseService,
   });
 
   @override
@@ -75,8 +72,7 @@ class _MealListScreenState extends State<MealListScreen> {
               future: _mealsFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                      child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Грешка: ${snapshot.error}'));
                 } else if (snapshot.hasData) {
@@ -113,9 +109,7 @@ class _MealListScreenState extends State<MealListScreen> {
                       final meal = _displayedMeals[index];
                       return MealGridItem(
                         meal: meal,
-                        favorites: widget.favorites,
-                        toggleFavorite: widget.toggleFavorite,
-                        isFavorite: widget.isFavorite,
+                        firebaseService: widget.firebaseService,
                       );
                     },
                   );
