@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'models/meal.dart';
 import 'screens/favorites_screen.dart';
@@ -5,12 +6,20 @@ import 'screens/random_meal_screen.dart';
 import 'screens/category_list_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'services/firebase_service.dart';
+import 'services/notification_service.dart';
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+}
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await NotificationService.init();
+  await NotificationService.scheduleDailyNotification();
 
   final FirebaseService firebaseService = FirebaseService();
 
