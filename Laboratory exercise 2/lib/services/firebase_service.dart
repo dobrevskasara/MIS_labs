@@ -7,31 +7,43 @@ class FirebaseService {
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<void> initFirebaseMessaging(GlobalKey<NavigatorState> navigatorKey, {
-    Function(RemoteMessage)? onMessageReceived,
-  }) async {
+  Future<void> initFirebaseMessaging(
+      GlobalKey<NavigatorState> navigatorKey, {
+        Function(RemoteMessage)? onMessageReceived,
+      }) async {
     NotificationSettings settings = await _messaging.requestPermission(
       alert: true,
       badge: true,
       sound: true,
     );
+
     print('User granted permission: ${settings.authorizationStatus}');
 
+    final token = await _messaging.getToken();
+    print("DEVICE FCM TOKEN: $token");
+
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print("Foreground message received");
       if (message.notification != null) {
-        print(
-            'Notification Title: ${message.notification!.title}, Body: ${message
-                .notification!.body}');
-        if (onMessageReceived != null) onMessageReceived(message);
+        print("Title: ${message.notification!.title}");
+        print("Body: ${message.notification!.body}");
+
+        if (onMessageReceived != null) {
+          onMessageReceived(message);
+        }
       }
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print("Notification opened app");
+
       navigatorKey.currentState?.pushNamed('/randomMeal');
     });
 
     RemoteMessage? initialMessage = await _messaging.getInitialMessage();
     if (initialMessage != null) {
+      print("App opened from terminated state");
+
       navigatorKey.currentState?.pushNamed('/randomMeal');
     }
   }

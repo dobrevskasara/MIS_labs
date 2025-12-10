@@ -1,89 +1,47 @@
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:timezone/data/latest.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import '../main.dart';
 
-class NotificationService {
-  static final FlutterLocalNotificationsPlugin _notifications =
-  FlutterLocalNotificationsPlugin();
+class NotificationService extends StatefulWidget {
+  final Widget child;
 
-  static Future<void> init() async {
-    tz.initializeTimeZones();
+  const NotificationService({super.key, required this.child});
 
-    const android = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const ios = DarwinInitializationSettings();
+  @override
+  State<NotificationService> createState() => _NotificationServiceState();
+}
 
-    const settings = InitializationSettings(android: android, iOS: ios);
+class _NotificationServiceState extends State<NotificationService> {
+  @override
+  void initState() {
+    super.initState();
 
-    await _notifications.initialize(
-      settings,
-      onDidReceiveNotificationResponse: (response) {
-        if (response.payload == "random") {
-          navigatorKey.currentState?.pushNamed('/randomMeal');
-        }
-      },
-    );
+    FirebaseMessaging.instance.getInitialMessage().then((msg) {
+      if (msg != null) {
+        _handleMessage(msg);
+      }
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
+
+    FirebaseMessaging.onMessage.listen((msg) {
+      print("Foreground: ${msg.notification?.title}");
+    });
   }
 
-  static Future<void> scheduleDailyNotification() async {
-    final now = tz.TZDateTime.now(tz.local);
+  void _handleMessage(RemoteMessage msg) {
+    print("Handle message: ${msg.data}");
 
-    final time = tz.TZDateTime(
-      tz.local,
-      now.year,
-      now.month,
-      now.day,
-      20,
-      00,
-    );
-
-    final scheduleTime =
-    time.isBefore(now) ? time.add(const Duration(days: 1)) : time;
-
-    const androidDetails = AndroidNotificationDetails(
-      "daily_channel",
-      "Daily Notifications",
-      channelDescription: "Daily recipe reminder",
-      importance: Importance.max,
-      priority: Priority.high,
-    );
-
-    const iosDetails = DarwinNotificationDetails();
-
-    await _notifications.zonedSchedule(
-      1,
-      "Рецепт на денот",
-      "Кликни за нов рандом рецепт!",
-      scheduleTime,
-      const NotificationDetails(android: androidDetails, iOS: iosDetails),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation:
-      UILocalNotificationDateInterpretation.absoluteTime,
-      matchDateTimeComponents: DateTimeComponents.time,
-      payload: "random",
-    );
+    if (msg.data['type'] == 'recipe') {
+      Navigator.pushNamed(
+        navigatorKey.currentContext!,
+        '/randomMeal',
+      );
+    }
   }
 
-  static Future<void> showTestNotification() async {
-    const android = AndroidNotificationDetails(
-      "test_channel",
-      "Test Notifications",
-      importance: Importance.max,
-      priority: Priority.high,
-    );
-
-    const ios = DarwinNotificationDetails();
-
-    await _notifications.show(
-      999,
-      "Тест Нотификација",
-      "Ова е тест нотификација!",
-      const NotificationDetails(android: android, iOS: ios),
-      payload: "random",
-    );
-  }
-
-  static Future<void> cancelAll() async {
-    await _notifications.cancelAll();
+  @override
+  Widget build(BuildContext context) {
+    return widget.child;
   }
 }
