@@ -1,27 +1,28 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'models/meal.dart';
 import 'screens/favorites_screen.dart';
 import 'screens/random_meal_screen.dart';
 import 'screens/category_list_screen.dart';
-import 'package:firebase_core/firebase_core.dart';
+
 import 'services/firebase_service.dart';
 import 'services/notification_service.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
+  print("Background message received: ${message.messageId}");
 }
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   await NotificationService.init();
-  await NotificationService.scheduleDailyNotification();
-
-  final FirebaseService firebaseService = FirebaseService();
+  await NotificationService.showTestNotification();
+  final firebaseService = FirebaseService();
 
   await firebaseService.initFirebaseMessaging(
     navigatorKey,
@@ -30,7 +31,8 @@ void main() async {
         ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(
           SnackBar(
             content: Text(
-              '${message.notification!.title ?? ''}: ${message.notification!.body ?? ''}',
+              '${message.notification!.title ?? ''}: '
+                  '${message.notification!.body ?? ''}',
             ),
           ),
         );
