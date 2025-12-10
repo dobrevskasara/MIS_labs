@@ -6,7 +6,6 @@ import 'screens/category_list_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'services/firebase_service.dart';
 
-
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
@@ -15,7 +14,20 @@ void main() async {
 
   final FirebaseService firebaseService = FirebaseService();
 
-  await firebaseService.initFirebaseMessaging(navigatorKey);
+  await firebaseService.initFirebaseMessaging(
+    navigatorKey,
+    onMessageReceived: (message) {
+      if (message.notification != null) {
+        ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(
+          SnackBar(
+            content: Text(
+              '${message.notification!.title ?? ''}: ${message.notification!.body ?? ''}',
+            ),
+          ),
+        );
+      }
+    },
+  );
 
   runApp(MyApp(firebaseService: firebaseService));
 }
@@ -41,7 +53,8 @@ class _MyAppState extends State<MyApp> {
       ),
       home: CategoryListScreen(firebaseService: widget.firebaseService),
       routes: {
-        '/favorites': (_) => FavoritesScreen(firebaseService: widget.firebaseService),
+        '/favorites': (_) =>
+            FavoritesScreen(firebaseService: widget.firebaseService),
         '/randomMeal': (_) => const RandomMealScreen(),
       },
     );

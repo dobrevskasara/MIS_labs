@@ -76,8 +76,8 @@ class _CategoryListScreenState extends State<CategoryListScreen> {
                     _allCategories = snapshot.data!;
                     _filteredCategories = _allCategories;
                     if (_searchController.text.isNotEmpty) {
-                      WidgetsBinding.instance.addPostFrameCallback(
-                              (_) => _filterCategories());
+                      WidgetsBinding.instance
+                          .addPostFrameCallback((_) => _filterCategories());
                     }
                   }
 
