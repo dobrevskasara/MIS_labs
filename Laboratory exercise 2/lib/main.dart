@@ -51,10 +51,19 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       navigatorKey: navigatorKey,
       title: "MealDB",
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        useMaterial3: true,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.purple,
+          foregroundColor: Colors.white,
+          iconTheme: IconThemeData(color: Colors.white),
+          actionsIconTheme: IconThemeData(color: Colors.white),
+        ),
+      ),
       home: CategoryListScreen(firebaseService: firebaseService),
       routes: {
-        '/favorites': (_) =>
-            FavoritesScreen(firebaseService: firebaseService),
+        '/favorites': (_) => FavoritesScreen(firebaseService: firebaseService),
         '/randomMeal': (_) => const RandomMealScreen(),
       },
     );

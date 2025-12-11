@@ -49,7 +49,24 @@ class _CategoryListScreenState extends State<CategoryListScreen> {
         title: const Text('MealDB Категории'),
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
+
+        // 👇👇 ВРАТЕНИ ИКОНИ (FAVORITES + RANDOM MEAL)
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.favorite),
+            onPressed: () {
+              Navigator.pushNamed(context, '/favorites');
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.shuffle),
+            onPressed: () {
+              Navigator.pushNamed(context, '/randomMeal');
+            },
+          ),
+        ],
       ),
+
       body: Column(
         children: [
           Padding(
@@ -76,15 +93,14 @@ class _CategoryListScreenState extends State<CategoryListScreen> {
                     _allCategories = snapshot.data!;
                     _filteredCategories = _allCategories;
                     if (_searchController.text.isNotEmpty) {
-                      WidgetsBinding.instance
-                          .addPostFrameCallback((_) => _filterCategories());
+                      WidgetsBinding.instance.addPostFrameCallback((_) => _filterCategories());
                     }
                   }
 
                   if (_filteredCategories.isEmpty) {
                     return const Center(
-                        child: Text(
-                            'Нема пронајдени категории според пребарувањето.'));
+                      child: Text('Нема пронајдени категории според пребарувањето.'),
+                    );
                   }
 
                   return ListView.builder(
