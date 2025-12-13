@@ -7,7 +7,6 @@ import 'screens/random_meal_screen.dart';
 import 'screens/category_list_screen.dart';
 
 import 'services/firebase_service.dart';
-import 'services/notification_service.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -35,9 +34,7 @@ void main() async {
   );
 
   runApp(
-    NotificationService(
-      child: MyApp(firebaseService: firebaseService),
-    ),
+    MyApp(firebaseService: firebaseService),
   );
 }
 
