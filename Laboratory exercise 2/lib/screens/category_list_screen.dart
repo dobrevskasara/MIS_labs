@@ -50,7 +50,7 @@ class _CategoryListScreenState extends State<CategoryListScreen> {
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
 
-        // 👇👇 ВРАТЕНИ ИКОНИ (FAVORITES + RANDOM MEAL)
+        
         actions: [
           IconButton(
             icon: const Icon(Icons.favorite),
